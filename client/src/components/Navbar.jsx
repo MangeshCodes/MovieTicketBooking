@@ -23,6 +23,7 @@ const Navbar = () => {
                 <Link onClick={() => { scrollTo(0, 0); setIsOpen(false); }} to='/theaters' className="hover:text-primary-dull">Theaters</Link>
                 <Link onClick={() => { scrollTo(0, 0); setIsOpen(false); }} to='/releases' className="hover:text-primary-dull">Releases</Link>
                 <Link onClick={() => { scrollTo(0, 0); setIsOpen(false); }} to='/favourite' className="hover:text-primary-dull">Favourite</Link>
+                <Link onClick={() => { scrollTo(0, 0); setIsOpen(false); }} to='/admin' className="hover:text-primary-dull">Admin</Link>
             </div>
             <div className='flex items-center gap-6'>
                 
@@ -53,6 +54,7 @@ const Navbar = () => {
                     <Link onClick={() => { scrollTo(0, 0); setIsOpen(false); }} to='/theaters' className="hover:text-primary-dull">Theaters</Link>
                     <Link onClick={() => { scrollTo(0, 0); setIsOpen(false); }} to='/releases' className="hover:text-primary-dull">Releases</Link>
                     <Link onClick={() => { scrollTo(0, 0); setIsOpen(false); }} to='/favourites' className="hover:text-primary-dull">Favourites</Link>
+                    <Link onClick={() => { scrollTo(0, 0); setIsOpen(false); }} to='/admin' className="hover:text-primary-dull">Admin</Link>
                 </div>
             )}
         </nav>
