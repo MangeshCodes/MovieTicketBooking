@@ -1,6 +1,3 @@
-// This file is for local development only
-// The actual API endpoints for Vercel are in the /api directory
-
 import express from 'express';
 import cors from 'cors';
 import 'dotenv/config';
@@ -42,7 +39,12 @@ if (serve && inngest && functions) {
   console.error('Inngest setup is incomplete - missing components');
 }
 
-// Start the server for local development
-app.listen(port, () => {
-  console.log(`Server listening at http://localhost:${port}`);
-});
+// For local development
+if (process.env.NODE_ENV !== 'production') {
+  app.listen(port, () => {
+    console.log(`Server listening at http://localhost:${port}`);
+  });
+}
+
+// Export the Express API for Vercel serverless deployment
+export default app;
