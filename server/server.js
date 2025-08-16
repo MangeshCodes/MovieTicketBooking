@@ -36,6 +36,12 @@ if (serve && inngest && functions) {
 }
 
 
-app.listen(port, () => {
-  console.log(`Server listening at http://localhost:${port}`);
-});
+// For local development
+if (process.env.NODE_ENV !== 'production') {
+  app.listen(port, () => {
+    console.log(`Server listening at http://localhost:${port}`);
+  });
+}
+
+// Export the Express API for Vercel serverless deployment
+export default app;
