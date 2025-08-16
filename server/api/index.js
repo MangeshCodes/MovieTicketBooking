@@ -1,15 +1,12 @@
-// This file is for local development only
-// The actual API endpoints for Vercel are in the /api directory
-
 import express from 'express';
 import cors from 'cors';
 import 'dotenv/config';
-import connectDB from './configs/db.js';
+import connectDB from '../configs/db.js';
 import { clerkMiddleware } from '@clerk/express';
-import { functions, serve, inngest } from './inngest/index.js';
+import { functions, serve, inngest } from '../inngest/index.js';
 
+// Create Express server
 const app = express();
-const port = process.env.PORT || 3000;
 
 // Connect to MongoDB database
 connectDB()
@@ -28,11 +25,7 @@ app.use(clerkMiddleware());
 
 // Routes
 app.get('/', (req, res) => {
-  res.json({ message: 'Movie Ticket Booking API is Live!' });
-});
-
-app.get('/health', (req, res) => {
-  res.json({ status: 'ok', message: 'Server is healthy!' });
+  res.status(200).json({ message: 'Movie Ticket Booking API is Live!' });
 });
 
 // Check that all components exist before using them
@@ -42,7 +35,12 @@ if (serve && inngest && functions) {
   console.error('Inngest setup is incomplete - missing components');
 }
 
-// Start the server for local development
-app.listen(port, () => {
-  console.log(`Server listening at http://localhost:${port}`);
-});
+// Handle all requests
+export default async function handler(req, res) {
+  // This is necessary to handle API routes in Vercel
+  if (!req.url) {
+    req.url = '/';
+  }
+  
+  return app(req, res);
+}

@@ -1,13 +1,9 @@
-// Import Inngest using require syntax and then convert to ES module
-import { createRequire } from 'module';
-const require = createRequire(import.meta.url);
-const inngestPkg = require('inngest');
-const Inngest = inngestPkg.Inngest;
-const serve = inngestPkg.serve;
-
+import { Inngest } from 'inngest';
+import { serve as inngestServe } from 'inngest/express';
 import User from "../models/user.js";
+
 export const inngest = new Inngest({ id: "movie-ticket-booking" });
-export { serve };
+export const serve = inngestServe;
 
 //Inngest function to save user data and receive events
 // Inngest function to save user data and receive events
