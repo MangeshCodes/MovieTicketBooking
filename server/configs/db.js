@@ -1,7 +1,5 @@
 import mongoose from "mongoose";
-
 // Cache the database connection
-
 
 const connectDB = async () => {
     try {
