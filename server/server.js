@@ -27,7 +27,7 @@ app.use(clerkMiddleware());
 app.get('/', (req, res) => {
   res.send('Movie Ticket Booking API is Live!');
 });
-app.use('/api/inn gest', serve({ client: inngest, functions }));
+app.use('/api/inngest', serve({ client: inngest, functions }));
 
 // Check that all components exist before using them
 // For local development
