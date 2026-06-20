@@ -92,7 +92,6 @@ MovieTicketBooking/
      ```
    - Create a `.env` file based on `.env.example`:
      ```env
-     MONGODB_URI=mongodb+srv://your_username:password@cluster.mongodb.net
      TMDB_API_KEY=your_tmdb_api_key
      CLERK_PUBLISHABLE_KEY=pk_test_...
      CLERK_SECRET_KEY=sk_test_...
