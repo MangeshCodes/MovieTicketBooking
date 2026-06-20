@@ -1,12 +1,12 @@
-import React, { useEffect, useState } from 'react';
-import { dummyShowsData } from '../../assets/assets';
+import React, { useEffect, useState, useContext } from 'react';
 import Title from '../../components/admin/Title';
 import { KConverter } from '../../lib/kConverter';
 import { Check as CheckIcon, Trash as DeleteIcon } from 'lucide-react';
-
+import { AppContext } from '../../context/AppContext';
+import toast from 'react-hot-toast';
 
 const AddShows = () => {
-  const currency = import.meta.env.VITE_CURRENCY;
+  const { getNowPlayingMovies, addShow, currency } = useContext(AppContext);
   const [nowPlayingMovies, setNowPlayingMovies] = useState([]);
   const [selectedMovie, setSelectedMovie] = useState(null);
   const [dateTimeSelection, setDateTimeSelection] = useState({});
@@ -14,7 +14,8 @@ const AddShows = () => {
   const [showPrice, setShowPrice] = useState("");
 
   const fetchNowPlayingMovies = async () => {
-    setNowPlayingMovies(dummyShowsData);
+    const movies = await getNowPlayingMovies();
+    setNowPlayingMovies(movies || []);
   };
 
   useEffect(() => {
@@ -49,6 +50,25 @@ const AddShows = () => {
         [date]: filteredTimes,
       };
     });
+  };
+
+  const handleAddShowSubmit = async () => {
+    if (!selectedMovie) return toast.error("Please select a movie.");
+    if (!showPrice) return toast.error("Please enter a show price.");
+    if (Object.keys(dateTimeSelection).length === 0) return toast.error("Please add at least one show date and time.");
+
+    const showsInput = Object.entries(dateTimeSelection).map(([date, times]) => ({
+      date,
+      time: times
+    }));
+
+    const success = await addShow(selectedMovie, showsInput, showPrice);
+    if (success) {
+      setSelectedMovie(null);
+      setDateTimeSelection({});
+      setDateTimeInput("");
+      setShowPrice("");
+    }
   };
 
   return nowPlayingMovies.length > 0 ? (
@@ -158,7 +178,7 @@ const AddShows = () => {
           </ul>
         </div>
       )}
-      <button className='bg-primary text-white px-8 py-2 mt-6 rounded hover:bg-primary/90 transition-all cursor-pointer'>
+      <button onClick={handleAddShowSubmit} className='bg-primary text-white px-8 py-2 mt-6 rounded hover:bg-primary/90 transition-all cursor-pointer'>
         Add Show
       </button>
     </>

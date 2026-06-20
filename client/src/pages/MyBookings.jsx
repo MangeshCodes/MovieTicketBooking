@@ -1,29 +1,16 @@
-import React, { useEffect, useState } from "react";
-import { dummyBookingData } from "../assets/assets";
+import React, { useEffect, useContext } from "react";
+import { AppContext } from "../context/AppContext";
 import Loading from "../components/Loading";
 import BlurCircle from "../components/BlurCircle";
 
 const MyBookings = () => {
-    const currency = import.meta.env.VITE_CURRENCY || "$";
-    const [bookings, setBookings] = useState([]);
-    const [isLoading, setIsLoading] = useState(true);
-
-    const getMyBookings = async () => {
-        try {
-            console.log("Loading bookings...", dummyBookingData);
-            setBookings(dummyBookingData);
-            setIsLoading(false);
-        } catch (error) {
-            console.error("Error loading bookings:", error);
-            setIsLoading(false);
-        }
-    };
+    const { myBookings, getUserBookings, loading, currency } = useContext(AppContext);
 
     useEffect(() => {
-        getMyBookings();
+        getUserBookings();
     }, []);
 
-    return !isLoading ? (
+    return !loading ? (
         <>
             <div className="relative px-6 md:px-16 lg:px-40 pt-28 pb-12 min-h-[80vh] bg-black text-white">
                 <BlurCircle top="100px" left="100px" />
@@ -33,12 +20,12 @@ const MyBookings = () => {
 
                 <h1 className="text-2xl font-semibold mb-6">My Bookings</h1>
 
-                {bookings.length === 0 ? (
+                {myBookings.length === 0 ? (
                     <div className="text-center text-gray-400 mt-8">
                         <p>No bookings found.</p>
                     </div>
                 ) : (
-                    bookings.map((item, index) => {
+                    myBookings.map((item, index) => {
                     const showDate = new Date(item.show.showDateTime).toLocaleString('en-US', {
                         weekday: 'short',
                         month: 'long',
@@ -62,7 +49,7 @@ const MyBookings = () => {
                                 />
                                 <div className="flex flex-col justify-between">
                                     <p className="text-lg font-semibold">{item.show.movie.title}</p>
-                                    <p className="text-gray-400 text-sm">{item.show.movie.runtime}</p>
+                                    <p className="text-gray-400 text-sm">{item.show.movie.runtime} Min</p>
                                     <p className="text-gray-400 text-sm">{showDate}</p>
                                 </div>
                             </div>

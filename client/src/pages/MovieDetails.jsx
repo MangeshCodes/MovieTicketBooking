@@ -1,34 +1,28 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useNavigate, useParams } from 'react-router-dom';
-import { dummyDateTimeData, dummyShowsData } from "../assets/assets";
+import { AppContext } from "../context/AppContext";
 import { Heart, PlayCircleIcon, StarIcon } from 'lucide-react';
 import timeFormat from '../lib/timeFormat';
 import DateSelect from "../components/DateSelect";
 import MovieCard from '../components/MovieCard';
-/**
- * MovieDetails component displays detailed information about a selected movie,
- * including its poster, title, rating, overview, runtime, genres, release year,
- * and cast members. It also provides options to watch the trailer, buy tickets,
- * and add the movie to favorites. The component fetches movie data based on the
- * route parameter `id` and renders a date selection component for ticket booking.
- *
- * @component
- * @returns {JSX.Element} The rendered MovieDetails page.
- */
+
 const MovieDetails = () => {
     const { id } = useParams();
     const [show, setShow] = useState(null);
-    const navigate=useNavigate();
+    const navigate = useNavigate();
+    const { getMovieDetails, updateFavorites, favorites, movies } = useContext(AppContext);
+
+    const isFavorite = favorites.some(fav => fav._id.toString() === id);
+
     useEffect(() => {
-        const getShow = () => {
-            const foundShow = dummyShowsData.find(show => show._id.toString() === id);
-            if (foundShow) {
-                setShow({ movie: foundShow, dateTime: dummyDateTimeData }); // <-- fix here
+        const fetchDetails = async () => {
+            const data = await getMovieDetails(id);
+            if (data) {
+                setShow({ movie: data.movie, dateTime: data.dateTime });
             }
         };
-        getShow();
+        fetchDetails();
     }, [id]);
-
 
     if (!show) {
         return <div className="text-center mt-20 text-gray-400 text-lg">Loading movie details...</div>;
@@ -70,8 +64,11 @@ const MovieDetails = () => {
                                 Watch Trailer
                             </button>
                             <a href="#dateSelect" className="text-primary underline">Buy Tickets</a>
-                            <button className="p-2 bg-gray-100 rounded-full">
-                                <Heart className='w-5 h-5 text-red-500' />
+                            <button 
+                                onClick={() => updateFavorites(id)} 
+                                className="p-2 bg-gray-100 rounded-full cursor-pointer hover:bg-gray-200 transition"
+                            >
+                                <Heart className={`w-5 h-5 ${isFavorite ? 'text-red-500 fill-red-500' : 'text-gray-400'}`} />
                             </button>
                         </div>
 
@@ -97,7 +94,7 @@ const MovieDetails = () => {
                 You May Also Like
             </p>
             <div className="flex flex-wrap max-sm:justify-center gap-8">
-             {dummyShowsData.slice(0,4).map((movie,index)=>(
+             {movies.filter(m => m._id.toString() !== id).slice(0,4).map((movie,index)=>(
                 <MovieCard key={index} movie={movie}/> )
              )}
             </div>

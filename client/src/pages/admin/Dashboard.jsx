@@ -1,14 +1,14 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useContext } from 'react'
 import { ChartLineIcon, CircleDollarSignIcon, PlayCircleIcon, StarIcon, UsersIcon } from 'lucide-react';
-import { dummyDashboardData } from '../../assets/assets';
 import Loading from '../../components/Loading';
 import Title from '../../components/admin/Title';
 import BlurCircle from '../../components/BlurCircle';
 import { dateFormat } from '../../lib/dateFormat';
+import { AppContext } from '../../context/AppContext';
 
 const Dashboard = () => {
 
-  const currency = import.meta.env.VITE_CURRENCY;
+  const { getDashboardData, currency } = useContext(AppContext);
   const [dashboardData, setDashboardData] = useState({
     totalBookings: 0,
     totalRevenue: 0,
@@ -20,18 +20,21 @@ const Dashboard = () => {
 
   const dashboardCards = [
     { title: "Total Bookings", value: dashboardData.totalBookings || "0", icon: ChartLineIcon },
-    { title: "Total Revenue", value: dashboardData.totalRevenue || "0", icon: CircleDollarSignIcon },
-    { title: "Active Shows", value: dashboardData.activeShows.length || "0", icon: PlayCircleIcon },
+    { title: "Total Revenue", value: `${currency}${dashboardData.totalRevenue || 0}`, icon: CircleDollarSignIcon },
+    { title: "Active Shows", value: dashboardData.activeShows?.length || "0", icon: PlayCircleIcon },
     { title: "Total Users", value: dashboardData.totalUser || "0", icon: UsersIcon }
   ];
 
-  const fetchDashboardData = async () => {
-    setDashboardData(dummyDashboardData);
+  const fetchDashboard = async () => {
+    const data = await getDashboardData();
+    if (data) {
+      setDashboardData(data);
+    }
     setLoading(false);
   }
 
   useEffect(() => {
-    fetchDashboardData();
+    fetchDashboard();
   }, []);
 
   return !loading ? (

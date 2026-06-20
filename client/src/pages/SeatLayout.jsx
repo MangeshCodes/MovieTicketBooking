@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { useNavigate, useParams } from 'react-router-dom';
-import { dummyShowsData, dummyDateTimeData, assets } from "../assets/assets";
+import { AppContext } from "../context/AppContext";
 import Loading from "../components/Loading";
 import { ArrowRightIcon, ClockIcon } from "lucide-react";
 import isoTimeFormat from "../lib/isoTImeFormat";
@@ -13,14 +13,16 @@ const SeatLayout = () => {
     const [selectedSeats, setSelectedSeats] = useState([]);
     const [selectedTime, setSelectedTime] = useState(null);
     const [show, setShow] = useState(null);
+    const [occupiedSeats, setOccupiedSeats] = useState([]);
     const navigate = useNavigate();
+    const { getMovieDetails, getOccupiedSeats, bookSeats } = useContext(AppContext);
 
     const getShow = async () => {
-        const show = dummyShowsData.find(show => show._id === id);
-        if (show) {
+        const data = await getMovieDetails(id);
+        if (data) {
             setShow({
-                movie: show,
-                dateTime: dummyDateTimeData,
+                movie: data.movie,
+                dateTime: data.dateTime,
             });
         }
     };
@@ -45,14 +47,18 @@ const SeatLayout = () => {
                 <div className="flex flex-wrap items-center justify-center gap-2">
                     {Array.from({ length: count }, (_, i) => {
                         const seatId = `${row}${i + 1}`;
+                        const isOccupied = occupiedSeats.includes(seatId);
                         return (
                             <button
                                 key={seatId}
+                                disabled={isOccupied}
                                 onClick={() => handleSeatClick(seatId)}
-                                className={`h-8 w-8 rounded border cursor-pointer transition font-bold
-                                    ${selectedSeats.includes(seatId)
-                                        ? "bg-[#F3123C] text-white border-[#F3123C]"
-                                        : "bg-gray-800 text-white border-gray-700 hover:bg-gray-700"}
+                                className={`h-8 w-8 rounded border transition font-bold
+                                    ${isOccupied 
+                                        ? "bg-gray-600 text-gray-400 border-gray-600 cursor-not-allowed"
+                                        : selectedSeats.includes(seatId)
+                                            ? "bg-[#F3123C] text-white border-[#F3123C] cursor-pointer"
+                                            : "bg-gray-800 text-white border-gray-700 hover:bg-gray-700 cursor-pointer"}
                                 `}
                             >
                                 {seatId}
@@ -66,7 +72,32 @@ const SeatLayout = () => {
 
     useEffect(() => {
         getShow();
-    }, );
+    }, [id]);
+
+    useEffect(() => {
+        if (selectedTime?.showId) {
+            const fetchOccupied = async () => {
+                const seats = await getOccupiedSeats(selectedTime.showId);
+                setOccupiedSeats(seats || []);
+                setSelectedSeats([]); // Reset selected seats on time change
+            };
+            fetchOccupied();
+        }
+    }, [selectedTime]);
+
+    const handleCheckout = async () => {
+        if (!selectedTime) {
+            return toast.error("Please select a show timing first.");
+        }
+        if (selectedSeats.length === 0) {
+            return toast.error("Please select at least one seat.");
+        }
+        const amount = selectedSeats.length * selectedTime.price;
+        const booking = await bookSeats(selectedTime.showId, selectedSeats, amount);
+        if (booking) {
+            navigate('/my-bookings');
+        }
+    };
 
     return show ? (
         <div className="flex flex-col md:flex-row px-6 md:px-16 lg:px-40 py-30 md:pt-50">
@@ -117,10 +148,10 @@ const SeatLayout = () => {
                     </p>
 
                     <button
-                        onClick={() => navigate('/')}
+                        onClick={handleCheckout}
                         className="flex items-center gap-1 mt-10 px-10 py-3 text-sm bg-[#F3123C] hover:bg-red-700 text-white transition rounded-full font-medium cursor-pointer active:scale-95"
                     >
-                        Proceed to Checkout
+                        Book Tickets & Pay ${(selectedSeats.length * (selectedTime?.price || 0)).toFixed(2)}
                         <ArrowRightIcon strokeWidth={3} className="w-4 h-4" />
                     </button>
                 </div>

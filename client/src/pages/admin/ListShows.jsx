@@ -1,34 +1,26 @@
-import React, { useEffect, useState } from 'react';
-import { dummyShowsData } from '../../assets/assets';
+import React, { useEffect, useState, useContext } from 'react';
 import Loading from '../../components/Loading';
 import { dateFormat } from '../../lib/dateFormat';
+import { AppContext } from '../../context/AppContext';
 
 const ListShows = () => {
   const [shows, setShows] = useState([]);
   const [loading, setLoading] = useState(true);
+  const { getAllShows, currency } = useContext(AppContext);
 
-  const currency=import.meta.env.VITE_CURRENCY;
-
-  const getAllShows = async () => {
+  const fetchShows = async () => {
     try {
-      setShows([{
-        movie: dummyShowsData[0],
-        showDateTime: "2025-06-30T02:30:00.000Z",
-        showPrice: 59,
-        occupiedSeats: {
-          A1: "user_1",
-          B1: "user_2",
-          C1: "user_3"
-        }
-      }]);
+      const data = await getAllShows();
+      setShows(data || []);
       setLoading(false);
     } catch (error) {
       console.error(error);
+      setLoading(false);
     }
   };
 
   useEffect(() => {
-    getAllShows();
+    fetchShows();
   }, []);
 
   return !loading ? (
@@ -52,8 +44,8 @@ const ListShows = () => {
                 <tr key={index} className="border-b border-[#3a3a3a] hover:bg-[#3a3a3a] bg-[#252525]">
                   <td className="p-2 min-w-45 pl-5 font-medium">{show.movie.title}</td>
                   <td className="p-2">{dateFormat(show.showDateTime)}</td>
-                  <td className="p-2">{Object.keys(show.occupiedSeats).length}</td>
-                  <td className="p-2">${(Object.keys(show.occupiedSeats).length * show.showPrice).toFixed(2)}</td>
+                  <td className="p-2">{show.occupiedSeats?.length || 0}</td>
+                  <td className="p-2">{currency}{((show.occupiedSeats?.length || 0) * show.showPrice).toFixed(2)}</td>
                 </tr>
               ))}
             </tbody>

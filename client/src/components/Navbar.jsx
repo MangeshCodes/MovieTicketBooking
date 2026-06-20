@@ -20,8 +20,8 @@ const Navbar = () => {
             <div className="hidden md:flex items-center gap-8 font-medium text-lg text-white">
                 <Link onClick={() => { scrollTo(0, 0); setIsOpen(false); }} to='/' className="hover:text-primary-dull">Home</Link>
                 <Link onClick={() => { scrollTo(0, 0); setIsOpen(false); }} to='/movies' className="hover:text-primary-dull">Movies</Link>
-                <Link onClick={() => { scrollTo(0, 0); setIsOpen(false); }} to='/theaters' className="hover:text-primary-dull">Theaters</Link>
-                <Link onClick={() => { scrollTo(0, 0); setIsOpen(false); }} to='/releases' className="hover:text-primary-dull">Releases</Link>
+                <Link onClick={() => { scrollTo(0, 0); setIsOpen(false); }} to='/movies' className="hover:text-primary-dull">Theaters</Link>
+                <Link onClick={() => { scrollTo(0, 0); setIsOpen(false); }} to='/movies' className="hover:text-primary-dull">Releases</Link>
                 <Link onClick={() => { scrollTo(0, 0); setIsOpen(false); }} to='/favourite' className="hover:text-primary-dull">Favourite</Link>
                 <Link onClick={() => { scrollTo(0, 0); setIsOpen(false); }} to='/admin' className="hover:text-primary-dull">Admin</Link>
             </div>
@@ -51,9 +51,9 @@ const Navbar = () => {
                     <XIcon className="absolute top-6 right-6 w-6 h-6 cursor-pointer" onClick={() => setIsOpen(false)} />
                     <Link onClick={() => { scrollTo(0, 0); setIsOpen(false); }} to='/' className="hover:text-primary-dull">Home</Link>
                     <Link onClick={() => { scrollTo(0, 0); setIsOpen(false); }} to='/movies' className="hover:text-primary-dull">Movies</Link>
-                    <Link onClick={() => { scrollTo(0, 0); setIsOpen(false); }} to='/theaters' className="hover:text-primary-dull">Theaters</Link>
-                    <Link onClick={() => { scrollTo(0, 0); setIsOpen(false); }} to='/releases' className="hover:text-primary-dull">Releases</Link>
-                    <Link onClick={() => { scrollTo(0, 0); setIsOpen(false); }} to='/favourites' className="hover:text-primary-dull">Favourites</Link>
+                    <Link onClick={() => { scrollTo(0, 0); setIsOpen(false); }} to='/movies' className="hover:text-primary-dull">Theaters</Link>
+                    <Link onClick={() => { scrollTo(0, 0); setIsOpen(false); }} to='/movies' className="hover:text-primary-dull">Releases</Link>
+                    <Link onClick={() => { scrollTo(0, 0); setIsOpen(false); }} to='/favourite' className="hover:text-primary-dull">Favourites</Link>
                     <Link onClick={() => { scrollTo(0, 0); setIsOpen(false); }} to='/admin' className="hover:text-primary-dull">Admin</Link>
                 </div>
             )}
